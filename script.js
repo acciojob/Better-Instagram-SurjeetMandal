@@ -1,21 +1,31 @@
-function allowDrop(event) {
-  event.preventDefault();
-}
+document.addEventListener('DOMContentLoaded', () => {
+  const allowDrop = event => event.preventDefault();
 
-function drag(event) {
-  event.dataTransfer.setData('text', event.target.id);
-}
+  const drag = event => {
+    event.dataTransfer.setData('text', event.target.id);
+  };
 
-function drop(event) {
-  event.preventDefault();
-  const data = event.dataTransfer.getData('text');
-  event.target.parentNode.insertBefore(document.getElementById(data), event.target);
-}
+  const drop = event => {
+    event.preventDefault();
+    const data = event.dataTransfer.getData('text');
+    const draggedElement = document.getElementById(data);
+    const targetElement = event.target.closest('.image');
 
-const images = document.querySelectorAll('.image');
-images.forEach(image => {
-  image.addEventListener('dragstart', drag);
-  image.addEventListener('dragover', allowDrop);
-  image.addEventListener('drop', drop);
+    if (targetElement) {
+      const parent = targetElement.parentNode;
+      parent.insertBefore(draggedElement, targetElement);
+    }
+  };
+
+  const images = document.querySelectorAll('.image');
+  images.forEach(image => {
+    image.addEventListener('dragstart', drag);
+  });
+
+  document.body.addEventListener('dragover', allowDrop);
+  document.body.addEventListener('drop', drop);
 });
+
+
+
 
