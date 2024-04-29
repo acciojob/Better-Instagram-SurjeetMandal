@@ -1,31 +1,46 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const allowDrop = event => event.preventDefault();
+let dragindex = 0;
+let dropindex = 0;
+let clone = "";
 
-  const drag = event => {
-    event.dataTransfer.setData('text', event.target.id);
-  };
+const images = document.querySelectorAll(".image");
 
-  const drop = event => {
-    event.preventDefault();
-    const data = event.dataTransfer.getData('text');
-    const draggedElement = document.getElementById(data);
-    const targetElement = event.target.closest('.image');
+function drag(e) {
+  e.dataTransfer.setData("text", e.target.id);
+}
 
-    if (targetElement) {
-      const parent = targetElement.parentNode;
-      parent.insertBefore(draggedElement, targetElement);
+function allowDrop(e) {
+  e.preventDefault();
+}
+
+function drop(e) {
+  clone = e.target.cloneNode(true);
+  let data = e.dataTransfer.getData("text");
+  let nodelist = document.getElementById("parent").childNodes;
+  console.log(data, e.target.id);
+  for (let i = 0; i < nodelist.length; i++) {
+    if (nodelist[i].id == data) {
+      dragindex = i;
     }
-  };
+  }
 
-  const images = document.querySelectorAll('.image');
-  images.forEach(image => {
-    image.addEventListener('dragstart', drag);
-  });
+  dragdrop(clone);
 
-  document.body.addEventListener('dragover', allowDrop);
-  document.body.addEventListener('drop', drop);
-});
+  document
+    .getElementById("parent")
+    .replaceChild(document.getElementById(data), e.target);
 
+  document
+    .getElementById("parent")
+    .insertBefore(
+      clone,
+      document.getElementById("parent").childNodes[dragindex]
+    );
+}
 
+const dragdrop = (image) => {
+  image.ondragstart = drag;
+  image.ondragover = allowDrop;
+  image.ondrop = drop;
+};
 
-
+images.forEach(dragdrop);
